@@ -1,0 +1,19 @@
+{
+  "name": "maintenance-tracker",
+  "version": "1.0.0",
+  "description": "Maintenance tracking application for utility management.",
+  "main": "maintenance-tracker.js",
+  "scripts": {
+    "test": "mocha tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IniOluwa/maintenance-tracker.git"
+  },
+  "author": "IniOluwa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IniOluwa/maintenance-tracker/issues"
+  },
+  "homepage": "https://github.com/IniOluwa/maintenance-tracker#readme"
+}
