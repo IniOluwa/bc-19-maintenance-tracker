@@ -1,6 +1,6 @@
 // BASE SETUP
 require('dotenv').config();
-// require('bootstrap')
+
 // Call the expedient packages
 var express = require('express');
 var app = express();
