@@ -1,18 +1,21 @@
+// Initialize dependencies
 var express = require('express');
 var router = express.Router();
 var jsonParser = require('body-parser').json();
 var firebase = require('firebase');
 var flash = require('connect-flash');
 
-
+// Get index page
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Maintenance Tracker' });
 });
 
+// Get signup page
 router.get('/signup', function(req, res, next){
   res.render('signup', { title: 'Maintenance Tracker' })
 });
 
+//  Post to signup page and create account
 router.post('/signup', function(req, res, next){
     var email = req.body.email
     var password = req.body.password
@@ -26,10 +29,12 @@ router.post('/signup', function(req, res, next){
     console.log('Signed up successfully.')
 });
 
+// Get login page
 router.get('/login', function(req, res, next){
   res.render('login', { title: 'Maintenance Tracker' })
 });
 
+// Post to login page and login
 router.post('/login', function(req, res, next){
     var email = req.body.email
     var password = req.body.password
@@ -43,6 +48,7 @@ router.post('/login', function(req, res, next){
     console.log('Logged in successfully.')
 });
 
+// Get error page
 router.get('/error', function(req, res, next){
   res.render('error', { title: 'Maintenance Tracker' })
 });
