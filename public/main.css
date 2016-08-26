@@ -1,0 +1,18 @@
+/**********************
+LOGIN - SIGNUP FORMS
+***********************/
+.signup-form, .login-form {
+    padding-left: 30%;
+    padding-right: 30%;
+}
+
+/***************************
+DASH BODY CONTENTS - SECTION
+*********************++++**/
+.section {
+    padding-left: 10%;
+}
+
+.section-request-form {
+    padding-right: 40%;
+}
