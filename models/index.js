@@ -1,25 +1,27 @@
 var firebase = require('firebase');
 
+// UserModel classs
 class UserModel {
   constructor(name, request, role){
     this.name = name;
-    this.requests = request;
+    this.request = request;
     this.role = role || 'staff';
   }
 
-  saveUser(){}
 }
 
+// Maintenance request class
 class MaintenanceRequest {
   constructor(objectName, details){
     this.object = objectName;
     this.requestDetails = details || '';
-    this.timeOfRequest = new Date();
+    this.timeOfRequest = Date.now();
     this.approved = false;
     this.timeApproved = null;
   }
 }
 
+// New user-request creation class
 class NewRequest {
   constructor(){
     this.userRequests = [];
@@ -29,29 +31,16 @@ class NewRequest {
     var request = new MaintenanceRequest(objectName, details);
     var userRequest = new UserModel(name, request);
     this.userRequests.push(userRequest);
-    saveRequest();
-  }
-  
-  viewRequests(requestOwner){
-    for (var i = 0; i < this.userRequests.length; i++) {
-      if (this.userRequests[i].name == requestOwner) {
-          console.log(this.userRequests[i]);
-      }else if (this.userRequests[i] + 1 === null){
-          console.log(requestOwner + ' has no requests.');
-      }
+    var name = userRequest.name;
+    var request = userRequest.request;
+    var role = userRequest.role;
+    firebase.database().ref('users/').push({
+      username: name,
+      request: request,
+      role: role,
+    });
     }
   }
 
-  saveRequest(){
-    var userId = this.userRequests.length  
-    var name = this.userRequests[userId].name
-    var request = this.userRequests[userId].request
-    firebase.database().ref('users/' + userId).set({
-      username: name,
-      request: request,
-      role: role
-    });
-  }
-}
 
-module.exports = [UserModel, MaintenanceRequest, NewRequest];
+module.exports = NewRequest;
