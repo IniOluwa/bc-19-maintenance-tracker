@@ -5,23 +5,29 @@
     <header> <% include ./partials/header %> </header>
     <div class="section">
     <h4>Welcome to MaintenanceTracker dash...</h4>
-    <form class="form-horizontal section-request-form">
+    <form class="form-horizontal section-request-form" action="/dash" method="POST">
       <fieldset>
         <legend>Create new request</legend>
         <div class="form-group">
-        <label for="" class="col-lg-2 control-label">Requester</label>
-         <div class="col-lg-5">
-            <input type="text" class="form-control" id="" placeholder="Maintenance Requester">
+        <div class="form-group">
+          <label for="" class="col-lg-2 control-label">Requester</label>
+           <div class="col-lg-5">
+              <input name="requester" type="text" class="form-control" id="" placeholder="Maintenance Requester">
+            </div>
           </div>
 
-          <label for="" class="col-lg-2 control-label">Possession</label>
-          <div class="col-lg-5">
-            <input type="text" class="form-control" id="" placeholder="Name/Type/Identification of Possession">
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Possession</label>
+            <div class="col-lg-5">
+              <input name="possession" type="text" class="form-control" id="" placeholder="Name/Type/Identification of Possession">
+            </div>
           </div>
 
-          <label for="" class="col-lg-2 control-label">Details</label>
-          <div class="col-lg-5">
-            <input type="text" class="form-control" id="" placeholder="Possession Details">
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Details</label>
+            <div class="col-lg-5">
+              <input name="details" type="text" class="form-control" id="" placeholder="Possession Details">
+            </div>
           </div>
         </div>
   
@@ -34,6 +40,7 @@
       </fieldset>
     </form>
     </div>
+    <h4><%= Date(Date.now()) %></h4>
 
     <footer> <% include ./partials/footer %> </footer>
   </body>
