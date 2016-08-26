@@ -28,6 +28,9 @@ global.database = firebase.database();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Declaring static directory
+app.use(express.static(__dirname + '/public'));
+
 // configure app to use bodyParser()
 // this enables getting data from a POST
 app.use(bodyParser.urlencoded({ extended: true}));
