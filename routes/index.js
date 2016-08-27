@@ -24,15 +24,16 @@ router.get('/signup', function(req, res, next){
 router.post('/signup', function(req, res, next){
   var email = req.body.email
   var password = req.body.password
-  firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+  firebase.auth().createUserWithEmailAndPassword(email, password).then(function(data) {
+    res.redirect('/dash');
+  }, function(error) {
     // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    if(errorMessage)return res.send(errorMessage);
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      return res.send(error && error.message);
   });
   console.log('Signed up successfully.');
-  res.redirect('/dash');
-  });
+});
 
 
 // Get login page
@@ -42,10 +43,13 @@ router.get('/login', function(req, res, next){
 
 // Post to login page and login
 router.post('/login', function(req, res, next){
-  var email = req.body.email
-  var password = req.body.password
+  var email = req.body.email;
+  var password = req.body.password;
   firebase.auth().signInWithEmailAndPassword(email, password).then(function(data){
+      console.log(data.providerData[0].uid, data.uid, data.email);
+      var theUser = data.providerData[0].uid;
       res.redirect('/dash');
+      // res.render('dash', { user: theUser })
   }, function(error) {
       return res.send(error && error.message);
   });
@@ -54,17 +58,19 @@ router.post('/login', function(req, res, next){
 
 // Get dashboard
 router.get('/dash', function(req, res, next){
-  res.render('dash', { title: 'Maintenance Tracker' })
-  });
+  var user = firebase.auth().currentUser;
+  res.render('dash', { title: 'Maintenance Tracker', user: user.displayName })
+})
+
 
 // Post a request from dashboard
 router.post('/dash', function(req, res, next){
   var maintenanceRequester = req.body.requester;
   var requesterPossession = req.body.possession;
   var possessionDetails = req.body.details;
-  console.log(maintenanceRequester, requesterPossession, possessionDetails)
+  var requesterContact = req.body.contact;
   var newRequest = new maintenanceRequest();
-  newRequest.createRequest(maintenanceRequester, requesterPossession, possessionDetails);
+  newRequest.createRequest(maintenanceRequester, requesterPossession, possessionDetails, requesterContact);
   console.log('Done.')
 });
 
@@ -73,5 +79,36 @@ router.post('/dash', function(req, res, next){
 router.get('/error', function(req, res, next){
   res.render('error', { title: 'Maintenance Tracker' })
   });
+
+// Get profile page
+router.get('/profile', function(req, res, next){
+  var user = firebase.auth().currentUser;
+  console.log(user)
+  if(user !== null){
+    // console.log(user.providerData);
+  }
+  res.render('profile', { title: 'Maintenance Tracker', user: user.displayName })
+})
+
+// Post from profile page
+router.post('/profile', function(req, res, next){
+  var displayName = req.body.displayName;
+  var photoURL = req.body.photoURL;
+  console.log(displayName, photoURL)
+  var user = firebase.auth().currentUser;
+  if(user !== null){
+    // console.log(user);
+    user.updateProfile({
+      displayName: displayName,
+      photoURL: photoURL
+    }).then(function() {
+      // Update successful.
+      console.log('Update successful')
+    }, function(error) {
+      // An error happened.
+      console.log(error);
+    });
+  }
+})
 
 module.exports = router;
