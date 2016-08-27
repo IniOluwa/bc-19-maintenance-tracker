@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var routes = require('./routes/index');
 var flash = require('connect-flash')
+// var provider = firebase.auth.GoogleAuthProvider();
 
 // configure firebase with app
 // Initialize Firebase
@@ -23,6 +24,9 @@ var config = {
 firebase.initializeApp(config);
 
 global.database = firebase.database();
+
+// Add scope for goole auth
+// provider.addScope('https://www.googleapis.com/auth/plus.login');
 
 // Views engine declaration
 app.set('view engine', 'ejs');
