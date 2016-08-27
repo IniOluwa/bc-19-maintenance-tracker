@@ -8,11 +8,16 @@ LOGIN - SIGNUP FORMS
 
 /***************************
 DASH BODY CONTENTS - SECTION
-*********************++++**/
+***************************/
 .section {
     padding-left: 10%;
 }
 
 .section-request-form {
-    padding-right: 40%;
+    padding-right: 20%;
+}
+
+.profile-edit-form {
+    padding-left: 30;
+    padding-right: 30;
 }
