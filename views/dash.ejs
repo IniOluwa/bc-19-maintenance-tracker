@@ -47,8 +47,29 @@
         </div>
       </fieldset>
     </form>
+
     </div>
-    <h4><%= Date(Date.now()) %></h4>
+      <% for(var i = 0; i < requests.length; i++){ %>
+        <% if(requests[i].userId === user.email){ %>
+         <div class="panel">
+            <div class="panel-heading">
+              <h3 class="panel-title"><strong>Request <%= i + 1 %> </strong></h3>
+            </div>
+            <div class="panel-body">
+              <strong>Requester: </strong><%= requests[i].role %> <br>
+              <strong>Staff ID: </strong><%= requests[i].userId %> <br>
+              <strong>Object reported: </strong><%= requests[i].request.objectName %> <br>
+              <strong>Object details: </strong><%= requests[i].request.requestDetails %> <br>
+              <strong>Time of request: </strong><%= Date(requests[i].request.timeOfRequest) %> <br>
+              <strong>Approval status: </strong><%= requests[i].request.approved %> <br>
+              <strong>Time approved: </strong><%= requests[i].request.timeApproved %> <br>
+              <strong>Object owner: </strong><%= requests[i].request.requestOwner %> <br>
+              <strong>Owner's contact: </strong><%= requests[i].request.requestOwnerContact %> <br>
+            </div>
+          </div>
+          <%  } %>
+       <% } %>
+    <h6 class="clock"><%= Date(Date.now()) %></h6>
     <footer> <% include ./partials/footer %> </footer>
   </body>
 </html>
