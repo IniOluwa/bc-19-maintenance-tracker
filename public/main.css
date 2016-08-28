@@ -21,3 +21,14 @@ DASH BODY CONTENTS - SECTION
     padding-left: 30;
     padding-right: 30;
 }
+
+.clock {
+    text-align: center;
+}
+
+/*
+REQUEST SERVE PANEL
+*/
+.panel {
+    padding-left: 10%;
+}
