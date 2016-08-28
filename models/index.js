@@ -14,7 +14,7 @@ class UserModel {
 class MaintenanceRequest {
   constructor(object, details, owner, contact){
     this.objectName = object;
-    this.requestDetails = details || '';
+    this.requestDetails = details;
     this.timeOfRequest = Date.now();
     this.approved = false;
     this.timeApproved = false;
@@ -36,7 +36,7 @@ class NewRequest {
     var name = userRequest.name;
     var request = userRequest.request;
     var role = userRequest.role;
-    firebase.database().ref('requests/').push({
+    firebase.database().ref('requests/').child(objectOwner).set({
       userId: name,
       request: request,
       role: role,
