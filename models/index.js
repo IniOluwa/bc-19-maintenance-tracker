@@ -5,19 +5,21 @@ class UserModel {
   constructor(name, request, role){
     this.name = name;
     this.request = request;
-    this.role = role || 'staff';
+    this.role = role || 'Staff';
   }
 
 }
 
 // Maintenance request class
 class MaintenanceRequest {
-  constructor(objectName, details){
-    this.object = objectName;
+  constructor(object, details, owner, contact){
+    this.objectName = object;
     this.requestDetails = details || '';
     this.timeOfRequest = Date.now();
     this.approved = false;
-    this.timeApproved = null;
+    this.timeApproved = false;
+    this.requestOwner = owner;
+    this.requestOwnerContact = contact;
   }
 }
 
@@ -27,20 +29,19 @@ class NewRequest {
     this.userRequests = [];
   }
 
-  createRequest(name, objectName, details){
-    var request = new MaintenanceRequest(objectName, details);
-    var userRequest = new UserModel(name, request);
+  createRequest(requesterId, objectName, objectDetails, objectOwner, objectOwnerContact){
+    var request = new MaintenanceRequest(objectName, objectDetails, objectOwner, objectOwnerContact);
+    var userRequest = new UserModel(requesterId, request);
     this.userRequests.push(userRequest);
     var name = userRequest.name;
     var request = userRequest.request;
     var role = userRequest.role;
-    firebase.database().ref('users/').push({
-      username: name,
+    firebase.database().ref('requests/').push({
+      userId: name,
       request: request,
       role: role,
     });
-    }
   }
-
+}
 
 module.exports = NewRequest;
