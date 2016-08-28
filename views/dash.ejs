@@ -47,7 +47,6 @@
         </div>
       </fieldset>
     </form>
-
     </div>
       <% for(var i = 0; i < requests.length; i++){ %>
         <% if(requests[i].userId === user.email){ %>
@@ -60,7 +59,7 @@
               <strong>Staff ID: </strong><%= requests[i].userId %> <br>
               <strong>Object reported: </strong><%= requests[i].request.objectName %> <br>
               <strong>Object details: </strong><%= requests[i].request.requestDetails %> <br>
-              <strong>Time of request: </strong><%= Date(requests[i].request.timeOfRequest) %> <br>
+              <strong>Time of request: </strong><%= new Date(requests[i].request.timeOfRequest) %> <br>
               <strong>Approval status: </strong><%= requests[i].request.approved %> <br>
               <strong>Time approved: </strong><%= requests[i].request.timeApproved %> <br>
               <strong>Object owner: </strong><%= requests[i].request.requestOwner %> <br>
