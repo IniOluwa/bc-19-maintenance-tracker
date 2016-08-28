@@ -5,15 +5,119 @@
   </head>
   <body>
     <header><% include ../partials/header %></header>
-    <h4>Welcome to MaintenanceTracker AdminDash</h4>
-    <div>
-      <% for(var i = 0; i < requests.length; i++){ %>
-          <p><%= requests[i] %></p>
-          <p><%= requests[i] %></p>
-          <p><%= requests[i] %></p>
-          <p><%= requests[i] %></p>
-          <p><%= requests[i] %></p>
-      <% } %>
+    <div class="section">
+    <div class="jumbotron">
+      <h1 class="jumbo-heading">MaintenanceTrack Administration</h1>
+      <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    </div>
+    <form class="form-horizontal section-request-form" action="/admin/dash" method="POST">
+      <fieldset>
+        <legend>Create new request</legend>
+        <div class="form-group">
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Requester</label>
+           <div class="col-lg-5">
+              <input name="requester" type="text" class="form-control" id="" placeholder="Maintenance Requester">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Possession</label>
+            <div class="col-lg-5">
+              <input name="possession" type="text" class="form-control" id="" placeholder="Name/Type/Identification of Possession">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Details</label>
+            <div class="col-lg-5">
+              <input name="details" type="text" class="form-control" id="" placeholder="Possession Details">
+            </div>
+          </div>
+
+          <div class="form-group">
+          <label for="" class="col-lg-2 control-label">Contact</label>
+           <div class="col-lg-5">
+              <input name="contact" type="text" class="form-control" id="" placeholder="Contact details">
+            </div>
+          </div>
+        </div>
+
+  
+        <div class="form-group">
+          <div class="col-lg-5 col-lg-offset-2">
+           <button type="reset" class="btn btn-default">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+    <% for(var i = 0; i < requests.length; i++){ %>
+      <p><% var theIndex = i %></p>
+      <form class="form-horizontal edit-request-form" action="/admin/dash" method="POST">
+      <fieldset>
+        <legend>Manage Request <%= i+1 %></legend>
+        <div class="form-group">
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Requester</label>
+           <div class="col-lg-5">
+              <input name="requestOwner" type="text" class="form-control" value="<%= requests[i].request.requestOwner %>" id="" placeholder="Maintenance Requester" disabled="">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Possession</label>
+            <div class="col-lg-5">
+              <input name="newPossession" type="text" class="form-control" value="<%= requests[i].request.objectName %>" id="" placeholder="Name/Type/Identification of Possession" >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Details</label>
+            <div class="col-lg-5">
+              <input name="newDetails" type="text" class="form-control" value="<%= requests[i].request.requestDetails %>" id="" placeholder="Possession Details" >
+            </div>
+          </div>
+
+
+          <div class="form-group">
+          <label for="" class="col-lg-2 control-label">Contact</label>
+           <div class="col-lg-5">
+              <input name="newContact" type="text" class="form-control" value="<%= requests[i].request.requestOwnerContact %>" id="" placeholder="Contact details" >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Request time</label>
+            <div class="col-lg-5">
+              <input name="oldTime" type="text" class="form-control" value="<%= requests[i].request.timeOfRequest %>" id="" placeholder="Time of request" >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Approval status</label>
+            <div class="col-lg-5">
+              <input name="status" type="checkbox" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-lg-2 control-label">Done</label>
+            <div class="col-lg-5">
+              <input name="done" type="checkbox" class="form-control">
+            </div>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <div class="col-lg-5 col-lg-offset-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+       <% } %>
     </div>
   </body>
 </html>
