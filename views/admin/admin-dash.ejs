@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/head %>
+  </head>
+  <body>
+    <header><% include ../partials/header %></header>
+    <h4>Welcome to MaintenanceTracker AdminDash</h4>
+    <div>
+      <% for(var i = 0; i < requests.length; i++){ %>
+          <p><%= requests[i] %></p>
+          <p><%= requests[i] %></p>
+          <p><%= requests[i] %></p>
+          <p><%= requests[i] %></p>
+          <p><%= requests[i] %></p>
+      <% } %>
+    </div>
+  </body>
+</html>
