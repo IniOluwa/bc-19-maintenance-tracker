@@ -6,18 +6,19 @@ var jsonParser = require('body-parser').json();
 var firebase = require('firebase');
 var flash = require('connect-flash');
 var maintenanceRequest = require('../models/index.js')
+var NewAdmin = require('../models/admin.js')
 
 
 
 // Get index page
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Maintenance Tracker' });
+  res.render('index');
   });
 
 
 // Get signup page
 router.get('/signup', function(req, res, next){
-  res.render('signup', { title: 'Maintenance Tracker' })
+  res.render('signup')
   });
 
 //  Post to signup page and create account
@@ -25,6 +26,12 @@ router.post('/signup', function(req, res, next){
   var email = req.body.email
   var password = req.body.password
   firebase.auth().createUserWithEmailAndPassword(email, password).then(function(data) {
+    var user = firebase.auth().currentUser;
+    firebase.database().ref('users/').push({
+      userId: email,
+      role: 'Staff',
+      uniqueId: user.uid
+    });
     res.redirect('/dash');
   }, function(error) {
     // Handle Errors here.
@@ -38,7 +45,7 @@ router.post('/signup', function(req, res, next){
 
 // Get login page
 router.get('/login', function(req, res, next){
-  res.render('login', { title: 'Maintenance Tracker' })
+  res.render('login', { message: 'Login as staff'})
   });
 
 // Post to login page and login
@@ -46,10 +53,7 @@ router.post('/login', function(req, res, next){
   var email = req.body.email;
   var password = req.body.password;
   firebase.auth().signInWithEmailAndPassword(email, password).then(function(data){
-      console.log(data.providerData[0].uid, data.uid, data.email);
-      var theUser = data.providerData[0].uid;
-      res.redirect('/dash');
-      // res.render('dash', { user: theUser })
+    res.redirect('/dash');
   }, function(error) {
       return res.send(error && error.message);
   });
@@ -58,46 +62,67 @@ router.post('/login', function(req, res, next){
 
 // Get dashboard
 router.get('/dash', function(req, res, next){
-  var user = firebase.auth().currentUser;
-  res.render('dash', { title: 'Maintenance Tracker', user: user.displayName })
-})
+  var userRequests = firebase.database().ref('requests/');
+  if (userRequests !== null){
+
+  userRequests.on('value', function(snapshot) {
+    var requestsTable = snapshot.val();
+    var results = [];
+
+    Object.keys(requestsTable).forEach(function(key, value) {
+      results.push(requestsTable[key]);
+    });
+
+    var user = firebase.auth().currentUser;
+    if (user === null) {
+      res.send("User is not logged in.")
+    }
+    res.render('dash', { user: user, requests: results });
+  });
+}else{
+    res.render('dash');
+  };
+});
 
 
 // Post a request from dashboard
 router.post('/dash', function(req, res, next){
-  var maintenanceRequester = req.body.requester;
-  var requesterPossession = req.body.possession;
+  var user = firebase.auth().currentUser;
+  if(user === null){
+    res.send('User is not logged in.')
+  }
+  var maintenanceRequester = user.email;
+  var possession = req.body.possession;
   var possessionDetails = req.body.details;
-  var requesterContact = req.body.contact;
+  var possessionOwner = req.body.requester;
+  var possessionOwnerContact = req.body.contact;
   var newRequest = new maintenanceRequest();
-  newRequest.createRequest(maintenanceRequester, requesterPossession, possessionDetails, requesterContact);
+  newRequest.createRequest(maintenanceRequester, possession, possessionDetails, possessionOwner, possessionOwnerContact);
   console.log('Done.')
+  res.redirect('dash')
 });
 
 
 // Get error page
 router.get('/error', function(req, res, next){
-  res.render('error', { title: 'Maintenance Tracker' })
+  res.render('error', { error: 'Error!' })
   });
 
 // Get profile page
 router.get('/profile', function(req, res, next){
   var user = firebase.auth().currentUser;
-  console.log(user)
-  if(user !== null){
-    // console.log(user.providerData);
+  if(user === null){
+    res.send("User is not logged in.")
   }
-  res.render('profile', { title: 'Maintenance Tracker', user: user.displayName })
+  res.render('profile', { user: user })
 })
 
 // Post from profile page
 router.post('/profile', function(req, res, next){
   var displayName = req.body.displayName;
   var photoURL = req.body.photoURL;
-  console.log(displayName, photoURL)
   var user = firebase.auth().currentUser;
   if(user !== null){
-    // console.log(user);
     user.updateProfile({
       displayName: displayName,
       photoURL: photoURL
@@ -108,7 +133,46 @@ router.post('/profile', function(req, res, next){
       // An error happened.
       console.log(error);
     });
-  }
+  };
+  res.redirect('dash')
+});
+
+router.get('/admin/login', function(req, res, next){
+  res.render('admin/admin-login', { message: 'Login as administrator' })
 })
+
+router.post('/admin/login', function(req, res, next){
+  var email = req.body.email;
+  var password = req.body.password;
+  firebase.auth().signInWithEmailAndPassword(email, password).then(function(data){
+      var user = firebase.auth().currentUser;
+      if(user.uid !== process.env.uid){
+        res.send('You do not have administrator rights.')
+      }else{
+        res.redirect('/admin/dash');        
+      }
+  }, function(error) {
+      return res.send(error && error.message);
+  });
+});
+
+router.get('/admin/dash', function(req, res, next){
+var userRequests = firebase.database().ref('requests/');
+
+  userRequests.on('value', function(snapshot) {
+    var requestsTable = snapshot.val();
+    var results = [];
+
+    Object.keys(requestsTable).forEach(function(key, value) {
+      results.push(requestsTable[key]);
+    });
+
+    var user = firebase.auth().currentUser;
+    if (user === null) {
+      res.send("User is not logged in.")
+    }
+    res.render('dash', { user: user, requests: results })
+  });
+});
 
 module.exports = router;
