@@ -9,12 +9,21 @@ LOGIN - SIGNUP FORMS
 /***************************
 DASH BODY CONTENTS - SECTION
 ***************************/
+body {
+    font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #ebebeb;
+    font-size: 15px;
+    line-height: 1.42857143;
+    background-color: #2b3e50;
+}
+
 .section {
     padding-left: 10%;
+    padding-right: 10%;
 }
 
 .section-request-form {
-    padding-right: 20%;
+    margin: 10% 10% 10% 10%;
 }
 
 .profile-edit-form {
@@ -24,6 +33,28 @@ DASH BODY CONTENTS - SECTION
 
 .clock {
     text-align: center;
+}
+
+.jumbo-heading {
+    text-align: center;
+}
+
+.landing-jumbo-heading {
+    text-align: center;
+    padding-top: 5%
+}
+
+.jumbotron {
+    color: #4e5d6c;
+}
+
+.panel {
+    color: #4e5d6c;
+    margin: 10% 10% 10% 10%;
+}
+
+.edit-request-form {
+    margin: 10% 10% 10% 10%;
 }
 
 /*
