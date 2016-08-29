@@ -180,6 +180,11 @@ router.post('/admin/dash', function(req, res){
     var oldTime = req.body.oldTime;
     var status = req.body.status;
     var done = req.body.done;
+    if (status === null || status === undefined){
+      status = 'off'
+    }else if(done === null || done === undefined){
+      done = 'off'
+    };
     userRequests.child(requestOwner).child('request').update(
         {
           objectName: newPossession,
@@ -191,7 +196,7 @@ router.post('/admin/dash', function(req, res){
           requestOwnerContact: newContact,
           isComplete: done
         }
-      );
+      )
   res.redirect('/admin/dash')
 });
 
