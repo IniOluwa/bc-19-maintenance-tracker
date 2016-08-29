@@ -6,7 +6,12 @@ var firebase = require('firebase');
 var flash = require('connect-flash');
 var maintenanceRequest = require('../models/index.js')
 var NewAdmin = require('../models/admin.js')
-var jusibe = require('jusibe');
+var Jusibe = require('jusibe');
+
+// Initialize jusibe for sms sending
+var publicKey = process.env.publicKey;
+var accessToken = process.env.accessToken;
+var jusibe = new Jusibe(publicKey, accessToken);
 
 
 // Get index page
@@ -66,6 +71,9 @@ router.route('/dash')
 .get(function(req, res){
   // Get dashboard
   var user = firebase.auth().currentUser;
+  if(!user){
+    res.redirect('/login')
+  };
   var userRequests = firebase.database().ref('requests/');
   userRequests.on('value', function(snapshot) {
     var requestsTable = snapshot.val();
@@ -88,7 +96,7 @@ router.route('/dash')
   var newRequest = new maintenanceRequest();
   newRequest.createRequest(maintenanceRequester, possession, possessionDetails, possessionOwner, possessionOwnerContact);
   // console.log('Done.');
-  res.redirect(req.get('referer'));
+  res.redirect('/dash');
 });
 
 
@@ -105,6 +113,7 @@ router.get('/profile', function(req, res){
     res.send("User is not logged in.")
   }
   res.render('profile', { user: user })
+  // res.partial('profile', { user: user })
 });
 
 
@@ -154,9 +163,9 @@ router.post('/admin/login', function(req, res){
 router.get('/admin/dash', function(req, res){
   var userRequests = firebase.database().ref('requests/');
   var user = firebase.auth().currentUser;
-  if (user === null) {
-    res.send('User is not logged in.'); 
-  }
+    if(!user){
+    res.redirect('/admin/login')
+  };
   userRequests.on('value', function(snapshot) {
     requestsTable = snapshot.val();
     results = []
@@ -171,8 +180,8 @@ router.get('/admin/dash', function(req, res){
 router.post('/admin/dash', function(req, res){
     var userRequests = firebase.database().ref('requests/');
     var user = firebase.auth().currentUser;
-    if (user === null) {
-      res.redirect('/admin/login')
+    if(!user){
+      res.redirect('/login')
     };
     var requestOwner = req.body.requestOwner;
     var newPossession = req.body.newPossession;
@@ -198,16 +207,16 @@ router.post('/admin/dash', function(req, res){
           isComplete: done
         }
       )
-    // var payload = {
-    // to: newContact,
-    // from: 'MaintenanceTrack',
-    // message: 'Your item\'s maintenance on MaintenanceTrack is complete.'
-    // };
+    var payload = {
+    to: newContact,
+    from: 'MaintenanceTrack',
+    message: 'Your item(s) maintenance on MaintenanceTrack is complete.'
+    };
    
-    // jusibe.sendSMS(payload, function (err, res) {
-    //   if (res.statusCode === 200) console.log(res.body);
-    //   else console.log(err);
-    // });
+    jusibe.sendSMS(payload, function (err, res) {
+      if (res.statusCode === 200) console.log(res.body);
+      else console.log(err);
+    });
 
   res.redirect('/admin/dash')
 });
