@@ -72,7 +72,7 @@ router.route('/dash')
   // Get dashboard
   var user = firebase.auth().currentUser;
   if(!user){
-    res.redirect('/login')
+    res.redirect('/login');
   };
   var userRequests = firebase.database().ref('requests/');
   userRequests.on('value', function(snapshot) {
