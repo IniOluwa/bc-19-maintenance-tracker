@@ -50,7 +50,7 @@ app.use(logger('dev'));
 app.use('/', routes);
 
 //  Flash messages
-app.all('/', function(req, res, next){
+app.all('/', function(req, res){
     req.flash('error', 'You have an error');
     req.flash('success', 'Successful')
     req.flash('/error')
@@ -58,15 +58,6 @@ app.all('/', function(req, res, next){
 
 app.use(flash());
 
-// Middlewares
-app.use('/dash', function(req, res){
-  var user = firebase.auth().currentUser;
-  if(user === null){
-    res.send('User is not logged in.')
-  }else{
-    res.render('dash', {user: user})
-  }
-});
 
 // App server port
 app.listen(3000, function() {
