@@ -8,10 +8,11 @@ var path = require('path');
 var logger = require('morgan');
 var firebase = require('firebase');
 var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
 var routes = require('./routes/index');
 var flash = require('connect-flash')
+var Jusibe = require('jusibe');
 // var provider = firebase.auth.GoogleAuthProvider();
+
 
 // configure firebase with app
 // Initialize Firebase
@@ -27,6 +28,10 @@ global.database = firebase.database();
 
 // Add scope for goole auth
 // provider.addScope('https://www.googleapis.com/auth/plus.login');
+
+var publicKey = process.env.publicKey;
+var accessToken = process.env.accessToken;
+var jusibe = new Jusibe(publicKey, accessToken);
 
 // Views engine declaration
 app.set('view engine', 'ejs');
