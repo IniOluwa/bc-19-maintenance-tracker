@@ -4,7 +4,7 @@
   <body>
     <header> <% include ./partials/header %> </header>
     <div class="section">
-    <h4>Welcome to MaintenanceTracker dash...</h4>
+    <h2><%= user.displayName %>'s MaintenanceTrack</h2>
     <form class="form-horizontal section-request-form" action="/dash" method="POST">
       <fieldset>
         <legend>Create new request</legend>
@@ -60,8 +60,9 @@
               <strong>Object reported: </strong><%= requests[i].request.objectName %> <br>
               <strong>Object details: </strong><%= requests[i].request.requestDetails %> <br>
               <strong>Time of request: </strong><%= new Date(requests[i].request.timeOfRequest) %> <br>
-              <strong>Approval status: </strong><%= requests[i].request.approved %> <br>
-              <strong>Time approved: </strong><%= requests[i].request.timeApproved %> <br>
+              <strong>Approval status: </strong><%= requests[i].request.isApproved %> <br>
+              <strong>Completion status: </strong><%= requests[i].request.isComplete %> <br>
+              <strong>Time approved: </strong><%= new Date(requests[i].request.timeApproved) %> <br>
               <strong>Object owner: </strong><%= requests[i].request.requestOwner %> <br>
               <strong>Owner's contact: </strong><%= requests[i].request.requestOwnerContact %> <br>
             </div>
