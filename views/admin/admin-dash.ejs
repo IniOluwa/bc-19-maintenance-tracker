@@ -8,7 +8,6 @@
     <div class="section">
     <div class="jumbotron">
       <h1 class="jumbo-heading">MaintenanceTrack Administration</h1>
-      <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
     </div>
     <form class="form-horizontal section-request-form" action="/admin/dash" method="POST">
       <fieldset>
@@ -62,7 +61,7 @@
           <div class="form-group">
             <label for="" class="col-lg-2 control-label">Requester</label>
            <div class="col-lg-5">
-              <input name="requestOwner" type="text" class="form-control" value="<%= requests[i].request.requestOwner %>" id="" placeholder="Maintenance Requester" disabled="">
+              <input name="requestOwner" type="text" class="form-control" value="<%= requests[i].request.requestOwner %>" id="" placeholder="Maintenance Requester" >
             </div>
           </div>
 
@@ -91,7 +90,7 @@
           <div class="form-group">
             <label for="" class="col-lg-2 control-label">Request time</label>
             <div class="col-lg-5">
-              <input name="oldTime" type="text" class="form-control" value="<%= requests[i].request.timeOfRequest %>" id="" placeholder="Time of request" >
+              <input name="oldTime" type="text" class="form-control" value="<%= new Date(requests[i].request.timeOfRequest) %>" id="" placeholder="Time of request" >
             </div>
           </div>
 
