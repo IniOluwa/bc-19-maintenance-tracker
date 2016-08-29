@@ -16,7 +16,6 @@ class MaintenanceRequest {
     this.objectName = object;
     this.requestDetails = details;
     this.timeOfRequest = Date.now();
-    this.approved = false;
     this.timeApproved = false;
     this.requestOwner = owner;
     this.requestOwnerContact = contact;
