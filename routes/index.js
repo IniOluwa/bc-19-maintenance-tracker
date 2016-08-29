@@ -2,11 +2,11 @@
 var express = require('express');
 var app = express();
 var router = express.Router();
-var jsonParser = require('body-parser').json();
 var firebase = require('firebase');
 var flash = require('connect-flash');
 var maintenanceRequest = require('../models/index.js')
 var NewAdmin = require('../models/admin.js')
+var jusibe = require('jusibe');
 
 
 // Get index page
@@ -40,6 +40,7 @@ router.post('/signup', function(req, res){
       return res.send(error && error.message);
   });
   console.log('Signed up successfully.');
+  res.redirect('/dash')
 });
 
 
@@ -60,7 +61,7 @@ router.post('/login', function(req, res){
   });
 });
 
-
+// Dashboard
 router.route('/dash')
 .get(function(req, res){
   // Get dashboard
@@ -73,7 +74,7 @@ router.route('/dash')
     Object.keys(requestsTable).forEach(function(key, value) {
       results.push(requestsTable[key]);
     });
-      res.render('dash', { user: user, requests: results }); 
+    res.render('dash', { user: user, requests: results }); 
   });
 })
 .post(function(req, res){
@@ -86,11 +87,9 @@ router.route('/dash')
   var possessionOwnerContact = req.body.contact;
   var newRequest = new maintenanceRequest();
   newRequest.createRequest(maintenanceRequester, possession, possessionDetails, possessionOwner, possessionOwnerContact);
-  console.log('Done.');
+  // console.log('Done.');
   res.redirect(req.get('referer'));
 });
-
-
 
 
 // Get error page
@@ -126,10 +125,12 @@ router.post('/profile', function(req, res){
       console.log(error);
     });
   }
+
+
   res.redirect('/dash')
 });
 
-
+// Admin Login
 router.get('/admin/login', function(req, res){
   res.render('admin/admin-login', { message: 'Administrator login' })
 });
@@ -149,7 +150,7 @@ router.post('/admin/login', function(req, res){
   });
 });
 
-
+// Admin dashboard
 router.get('/admin/dash', function(req, res){
   var userRequests = firebase.database().ref('requests/');
   var user = firebase.auth().currentUser;
@@ -166,7 +167,7 @@ router.get('/admin/dash', function(req, res){
   });
 });
 
-
+// Post from admin dashboard
 router.post('/admin/dash', function(req, res){
     var userRequests = firebase.database().ref('requests/');
     var user = firebase.auth().currentUser;
@@ -197,6 +198,17 @@ router.post('/admin/dash', function(req, res){
           isComplete: done
         }
       )
+    // var payload = {
+    // to: newContact,
+    // from: 'MaintenanceTrack',
+    // message: 'Your item\'s maintenance on MaintenanceTrack is complete.'
+    // };
+   
+    // jusibe.sendSMS(payload, function (err, res) {
+    //   if (res.statusCode === 200) console.log(res.body);
+    //   else console.log(err);
+    // });
+
   res.redirect('/admin/dash')
 });
 
