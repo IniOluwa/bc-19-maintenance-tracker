@@ -9,22 +9,22 @@ var maintenanceRequest = require('../models/index.js')
 var NewAdmin = require('../models/admin.js')
 
 
-
 // Get index page
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   res.render('index');
   });
 
 
 // Get signup page
-router.get('/signup', function(req, res, next){
+router.get('/signup', function(req, res){
   res.render('signup')
   });
 
+
 //  Post to signup page and create account
-router.post('/signup', function(req, res, next){
-  var email = req.body.email
-  var password = req.body.password
+router.post('/signup', function(req, res){
+  var email = req.body.email;
+  var password = req.body.password;
   firebase.auth().createUserWithEmailAndPassword(email, password).then(function(data) {
     var user = firebase.auth().currentUser;
     firebase.database().ref('users/').push({
@@ -44,27 +44,28 @@ router.post('/signup', function(req, res, next){
 
 
 // Get login page
-router.get('/login', function(req, res, next){
-  res.render('login', { message: 'Login as staff'})
+router.get('/login', function(req, res){
+  res.render('login', { message: 'Staff login'})
   });
 
+
 // Post to login page and login
-router.post('/login', function(req, res, next){
+router.post('/login', function(req, res){
   var email = req.body.email;
   var password = req.body.password;
   firebase.auth().signInWithEmailAndPassword(email, password).then(function(data){
-    res.redirect('/dash');
+    return res.redirect('/dash');
   }, function(error) {
       return res.send(error && error.message);
   });
 });
 
 
-// Get dashboard
-router.get('/dash', function(req, res, next){
+router.route('/dash')
+.get(function(req, res){
+  // Get dashboard
+  var user = firebase.auth().currentUser;
   var userRequests = firebase.database().ref('requests/');
-  if (userRequests !== null){
-
   userRequests.on('value', function(snapshot) {
     var requestsTable = snapshot.val();
     var results = [];
@@ -72,25 +73,12 @@ router.get('/dash', function(req, res, next){
     Object.keys(requestsTable).forEach(function(key, value) {
       results.push(requestsTable[key]);
     });
-
-    var user = firebase.auth().currentUser;
-    if (user === null) {
-      res.send("User is not logged in.")
-    }
-    res.render('dash', { user: user, requests: results });
+      res.render('dash', { user: user, requests: results }); 
   });
-}else{
-    res.render('dash');
-  };
-});
-
-
+})
+.post(function(req, res){
 // Post a request from dashboard
-router.post('/dash', function(req, res, next){
   var user = firebase.auth().currentUser;
-  if(user === null){
-    res.send('User is not logged in.')
-  }
   var maintenanceRequester = user.email;
   var possession = req.body.possession;
   var possessionDetails = req.body.details;
@@ -98,27 +86,31 @@ router.post('/dash', function(req, res, next){
   var possessionOwnerContact = req.body.contact;
   var newRequest = new maintenanceRequest();
   newRequest.createRequest(maintenanceRequester, possession, possessionDetails, possessionOwner, possessionOwnerContact);
-  console.log('Done.')
-  res.redirect('dash')
+  console.log('Done.');
+  res.redirect(req.get('referer'));
 });
 
 
+
+
 // Get error page
-router.get('/error', function(req, res, next){
+router.get('/error', function(req, res){
   res.render('error', { error: 'Error!' })
   });
 
+
 // Get profile page
-router.get('/profile', function(req, res, next){
+router.get('/profile', function(req, res){
   var user = firebase.auth().currentUser;
   if(user === null){
     res.send("User is not logged in.")
   }
   res.render('profile', { user: user })
-})
+});
+
 
 // Post from profile page
-router.post('/profile', function(req, res, next){
+router.post('/profile', function(req, res){
   var displayName = req.body.displayName;
   var photoURL = req.body.photoURL;
   var user = firebase.auth().currentUser;
@@ -133,46 +125,74 @@ router.post('/profile', function(req, res, next){
       // An error happened.
       console.log(error);
     });
-  };
-  res.redirect('dash')
+  }
+  res.redirect('/dash')
 });
 
-router.get('/admin/login', function(req, res, next){
-  res.render('admin/admin-login', { message: 'Login as administrator' })
-})
 
-router.post('/admin/login', function(req, res, next){
+router.get('/admin/login', function(req, res){
+  res.render('admin/admin-login', { message: 'Administrator login' })
+});
+
+
+router.post('/admin/login', function(req, res){
   var email = req.body.email;
   var password = req.body.password;
   firebase.auth().signInWithEmailAndPassword(email, password).then(function(data){
       var user = firebase.auth().currentUser;
       if(user.uid !== process.env.uid){
         res.send('You do not have administrator rights.')
-      }else{
-        res.redirect('/admin/dash');        
       }
+      res.redirect('/admin/dash')        
   }, function(error) {
       return res.send(error && error.message);
   });
 });
 
-router.get('/admin/dash', function(req, res, next){
-var userRequests = firebase.database().ref('requests/');
 
+router.get('/admin/dash', function(req, res){
+  var userRequests = firebase.database().ref('requests/');
+  var user = firebase.auth().currentUser;
+  if (user === null) {
+    res.send('User is not logged in.'); 
+  }
   userRequests.on('value', function(snapshot) {
-    var requestsTable = snapshot.val();
-    var results = [];
-
+    requestsTable = snapshot.val();
+    results = []
     Object.keys(requestsTable).forEach(function(key, value) {
       results.push(requestsTable[key]);
     });
+    res.render('admin/admin-dash', { user: user, requests: results }) 
+  });
+});
 
+
+router.post('/admin/dash', function(req, res){
+    var userRequests = firebase.database().ref('requests/');
     var user = firebase.auth().currentUser;
     if (user === null) {
-      res.send("User is not logged in.")
-    }
-    res.render('dash', { user: user, requests: results })
-  });
+      res.redirect('/admin/login')
+    };
+    var requestOwner = req.body.requestOwner;
+    var newPossession = req.body.newPossession;
+    var newDetails = req.body.newDetails;
+    var newContact = req.body.newContact;
+    var oldTime = req.body.oldTime;
+    var status = req.body.status;
+    var done = req.body.done;
+    userRequests.child(requestOwner).child('request').update(
+        {
+          objectName: newPossession,
+          requestDetails: newDetails,
+          timeOfRequest: oldTime,
+          isApproved:status,
+          timeApproved: Date.now(),
+          requestOwner: requestOwner,
+          requestOwnerContact: newContact,
+          isComplete: done
+        }
+      );
+  res.redirect('/admin/dash')
 });
 
 module.exports = router;
